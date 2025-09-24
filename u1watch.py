@@ -312,9 +312,15 @@ def main_loop():
                             pledge_button_elements[idx].click()
                             pay_button_element = driver.find_element(By.XPATH, '//*[@id="pledge-summary"]/div[4]/div/button')
                             pay_button_element.click()
-                            confirm_button_element = driver.find_element(By.XPATH, '//*[@id="pledge-app"]/div/div/div[2]/form/div[2]/div[2]/div[2]/button')
-                            confirm_button_element.click()
-                            msg = f"✅ 예약이 변경되었습니다! 야호!"
+                            cannot_pledge_popup_close_buttons = driver.find_elements(By.XPATH, '//*[@id="pledges_new"]/div/div/div/section/form/footer/span')
+                            if cannot_pledge_popup_close_buttons:
+                                cannot_pledge_popup_close_buttons[0].click()
+                                msg = f"⚠️ 누군가 먼저 예약을 한 것 같네요.."
+                            else:
+                                confirm_button_element = driver.find_element(By.XPATH, '//*[@id="pledge-app"]/div/div/div[2]/form/div[2]/div[2]/div[2]/button')
+                                confirm_button_element.click()
+                                msg = f"✅ 예약이 변경되었습니다! 야호!"
+
                             print(f"[{datetime.now().isoformat()}] {msg}")
                             send_telegram_message(msg)
 
