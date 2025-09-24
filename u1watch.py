@@ -301,6 +301,7 @@ def main_loop():
                 alert_user_and_blocking_open(OPEN_URL_ON_DETECT)
 
                 try:
+                    is_changed_pledge = False
                     reward_time_elements = driver.find_elements(By.XPATH, '//*[@id="pledge-app"]/div/div/div[2]/ul[1]/li/div/div[1]/div[4]/div/span[2]/time')
                     #print(reward_time_elements)
                     pledge_button_elements = driver.find_elements(By.XPATH, '//*[@id="pledge-app"]/div/div/div[2]/ul[1]/li/div/div[2]/div[2]/button')
@@ -312,14 +313,17 @@ def main_loop():
                             pledge_button_elements[idx].click()
                             pay_button_element = driver.find_element(By.XPATH, '//*[@id="pledge-summary"]/div[4]/div/button')
                             pay_button_element.click()
-                            cannot_pledge_popup_close_buttons = driver.find_elements(By.XPATH, '//*[@id="pledges_new"]/div/div/div/section/form/footer/span')
+                            confirm_button_element = driver.find_element(By.XPATH, '//*[@id="pledge-app"]/div/div/div[2]/form/div[2]/div[2]/div[2]/button')
+                            confirm_button_element.click()
+                            time.sleep(0.5)
+                            cannot_pledge_popup_close_buttons = driver.find_elements(By.XPATH, '//*[@id="pledges_edit"]/div/div/div/section/form/footer/span/button')
                             if cannot_pledge_popup_close_buttons:
                                 cannot_pledge_popup_close_buttons[0].click()
                                 msg = f"⚠️ 누군가 먼저 예약을 한 것 같네요.."
+
                             else:
-                                confirm_button_element = driver.find_element(By.XPATH, '//*[@id="pledge-app"]/div/div/div[2]/form/div[2]/div[2]/div[2]/button')
-                                confirm_button_element.click()
                                 msg = f"✅ 예약이 변경되었습니다! 야호!"
+                                is_changed_pledge = True
 
                             print(f"[{datetime.now().isoformat()}] {msg}")
                             send_telegram_message(msg)
@@ -331,7 +335,9 @@ def main_loop():
                     send_telegram_message(msg)
 
                 # 알림 후 계속 감시하고 싶으면 아래를 주석처리하고 계속 루프 유지
-                break
+                # break
+                if is_changed_pledge:
+                    break
             else:
                 print(f"[{datetime.now().isoformat()}] 대상 리워드 자리가 없음 (검사된 reward 수: {len(rewards)}).")
 
