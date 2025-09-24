@@ -188,9 +188,8 @@ def check_rewards_for_target(rewards):
         # if epoch_is_target_month(est):
         #     if (available is True) or (remaining_int is not None and remaining_int > 0):
         #         hits.append(r)
-        if t_id == TARGET_ID:
-            if (available is True) or (remaining_int is not None and remaining_int > 0):
-                hits.append(r)
+        if t_id == TARGET_ID and available is True:
+            hits.append(r)
     return hits
 
 # === 메인 루프 ===
@@ -317,6 +316,7 @@ def main_loop():
                             confirm_button_element.click()
                             time.sleep(0.5)
                             cannot_pledge_popup_close_buttons = driver.find_elements(By.XPATH, '//*[@id="pledges_edit"]/div/div/div/section/form/footer/span/button')
+                            # print(cannot_pledge_popup_close_buttons)
                             if cannot_pledge_popup_close_buttons:
                                 cannot_pledge_popup_close_buttons[0].click()
                                 msg = f"⚠️ 누군가 먼저 예약을 한 것 같네요.."
